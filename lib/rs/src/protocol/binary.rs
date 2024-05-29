@@ -81,7 +81,8 @@ where
     fn read_message_begin(&mut self) -> crate::Result<TMessageIdentifier> {
         let now = Instant::now();
         let mut first_bytes = vec![0; 4];
-        self.transport.read_exact(&mut first_bytes[..])?;
+        // self.transport.read_exact(&mut first_bytes[..])?;
+        self.transport.read_buf_exact(&mut first_bytes[..])?;
         let elapsed = now.elapsed();
         println!("a {:?}", elapsed);
 
