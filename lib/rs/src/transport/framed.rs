@@ -91,22 +91,22 @@ where
     C: Read,
 {
     fn read(&mut self, b: &mut [u8]) -> io::Result<usize> {
-        if self.cap - self.pos == 0 {
-            let now = Instant::now();
-            let message_size = self.chan.read_i32::<BigEndian>()? as usize;
-            println!("read message size in {:?}", now.elapsed());
+        // if self.cap - self.pos == 0 {
+        //     let now = Instant::now();
+        //     let message_size = self.chan.read_i32::<BigEndian>()? as usize;
+        //     println!("read message size in {:?}", now.elapsed());
 
-            let buf_capacity = cmp::max(message_size, READ_CAPACITY);
-            println!("resizing buffer to {:?}", now.elapsed());
+        //     let buf_capacity = cmp::max(message_size, READ_CAPACITY);
+        //     println!("resizing buffer to {:?}", now.elapsed());
 
-            self.buf.resize(buf_capacity, 0);
-            println!("resized buffer in {:?}", now.elapsed());
+        //     self.buf.resize(buf_capacity, 0);
+        //     println!("resized buffer in {:?}", now.elapsed());
 
-            self.chan.read_exact(&mut self.buf[..message_size])?;
-            println!("read message in {:?}", now.elapsed());
-            self.cap = message_size as usize;
-            self.pos = 0;
-        }
+        //     self.chan.read_exact(&mut self.buf[..message_size])?;
+        //     println!("read message in {:?}", now.elapsed());
+        //     self.cap = message_size as usize;
+        //     self.pos = 0;
+        // }
         let now = Instant::now();
         let nread = cmp::min(b.len(), self.cap - self.pos);
         println!("nread in {:?}", now.elapsed());
