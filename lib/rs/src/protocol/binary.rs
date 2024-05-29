@@ -80,7 +80,7 @@ where
     #[allow(clippy::collapsible_if)]
     fn read_message_begin(&mut self) -> crate::Result<TMessageIdentifier> {
         let now = Instant::now();
-        let mut first_bytes = Vec::new();
+        let mut first_bytes: Vec<u8> = Vec::new();
         self.transport.read_to_end(&mut first_bytes[..])?;
         let elapsed = now.elapsed();
         println!("a {:?}", elapsed);
