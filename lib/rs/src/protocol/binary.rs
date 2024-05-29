@@ -17,6 +17,7 @@
 
 use byteorder::{BigEndian, ByteOrder, ReadBytesExt, WriteBytesExt};
 use std::convert::{From, TryFrom};
+use std::time::Instant;
 
 use super::{
     TFieldIdentifier, TInputProtocol, TInputProtocolFactory, TListIdentifier, TMapIdentifier,
@@ -78,8 +79,11 @@ where
 {
     #[allow(clippy::collapsible_if)]
     fn read_message_begin(&mut self) -> crate::Result<TMessageIdentifier> {
+        let now = Instant::now();
         let mut first_bytes = vec![0; 4];
         self.transport.read_exact(&mut first_bytes[..])?;
+        let elapsed = now.elapsed();
+        println!("a {:?}", elapsed);
 
         // the thrift version header is intentionally negative
         // so the first check we'll do is see if the sign bit is set
@@ -96,6 +100,7 @@ where
                 let message_type: TMessageType = TryFrom::try_from(first_bytes[3])?;
                 let name = self.read_string()?;
                 let sequence_number = self.read_i32()?;
+                println!("b {:?}", now.elapsed());
                 Ok(TMessageIdentifier::new(name, message_type, sequence_number))
             }
         } else {
