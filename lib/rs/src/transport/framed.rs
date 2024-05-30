@@ -15,6 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+use byteorder::ByteOrder;
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
 use std::cmp;
 use std::io;
@@ -93,7 +94,14 @@ where
     fn read(&mut self, b: &mut [u8]) -> io::Result<usize> {
         if self.cap - self.pos == 0 {
             let now = Instant::now();
-            let message_size = self.chan.read_i32::<BigEndian>()? as usize;
+            // let message_size = self.chan.read_i32::<BigEndian>()? as usize;
+
+            let mut message_size = vec![0; 4];
+            println!("created message size buffer in {:?}", now.elapsed());
+
+            self.chan.read_exact(&mut message_size)?;
+            println!("read message size in {:?}", now.elapsed());
+            let message_size = BigEndian::read_i32(&message_size) as usize;
             println!("read message size in {:?}", now.elapsed());
 
             let buf_capacity = cmp::max(message_size, READ_CAPACITY);
